@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background_tab_pressed">#6633B5E5</color>
+    <color name="light_orange">#FF8C00</color>
+    <color name="white">#ffffff</color>
+    <color name="light_white">#daebf7</color>
+    <color name="accent_color">#ff9182</color>
+    <color name="blue">#61a6d6</color>
+    <color name="text">#222222</color>
+    <color name="gray">#bbbbbb</color>
+    <color name="blue_sky">#7ecec9</color>
+    <color name="text_selected_welcome">#888</color>
+
+</resources>

@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">OxygenRead</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="drawer_open">打开</string>
+    <string name="drawer_close">关闭</string>
+
+    <!--Welcome-->
+
+    <string name="button_product_tour">product tour</string>
+
+    <string name="welcom_head_01">贴心的服务</string>
+    <string name="welcom_content_01">在这里，我们给你最高享受的体验。</string>
+    <string name="welcom_head_02">多彩的功能</string>
+    <string name="welcom_content_02">在这里，你能足不出户获得更多的资讯，快带上你的好友一起去看场电影吧。</string>
+    <string name="welcom_head_03">全新的设计</string>
+    <string name="welcom_content_03">使用Android最新的Material Design风格，让Oxygen阅读体现您的品味。</string>
+
+</resources>
