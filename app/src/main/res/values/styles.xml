@@ -6,8 +6,10 @@
 
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#7ecec9</item>
-        <item name="colorPrimaryDark">#0097A7</item>
+        <item name="colorPrimaryDark">#7ecec9</item>
         <item name="colorAccent">#61B3DD</item>
+        <item name="android:textColorPrimary">#ffffff</item>
+
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">

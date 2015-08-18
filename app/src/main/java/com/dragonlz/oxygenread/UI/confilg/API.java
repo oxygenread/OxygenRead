@@ -5,9 +5,9 @@ package com.dragonlz.oxygenread.UI.confilg;
  */
 public class API {
     /**
-     *      新闻频道
+     *      养生知识
      */
-    private static final String NEWS_API = "http://apis.baidu.com/showapi_open_bus/channel_news/channel_news";
+    private static final String HEALTHY_API = "http://route.showapi.com/90-87";
 
     /**
      *      历史上的今天
@@ -34,8 +34,8 @@ public class API {
     private static final String CINEMA_API = "http://apis.baidu.com/apistore/movie/cinema";
     private static final String MOVIEW_API = "http://apis.baidu.com/apistore/movie/film";
 
-    public static String getNewsApi() {
-        return NEWS_API;
+    public static String getHealthyApi() {
+        return HEALTHY_API;
     }
 
     public static String getHistoryApi() {
