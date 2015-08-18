@@ -1,11 +1,8 @@
 package com.dragonlz.oxygenread.UI.Utils;
 
-import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.dragonlz.oxygenread.UI.Model.AreaId;
-import com.dragonlz.oxygenread.UI.Model.HealthyNotice;
 import com.dragonlz.oxygenread.UI.Model.HistoryToday;
 import com.dragonlz.oxygenread.UI.Model.Movie;
 import com.dragonlz.oxygenread.UI.Model.Reflect;
@@ -15,10 +12,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
+/**
+ * Created by sdm on 2015/8/16.
+ */
 public class ParseUtil {
 
     private String parseJson(String jsonData) {
@@ -33,7 +31,6 @@ public class ParseUtil {
                 return showapi_res_error;
             }
             showapi_res_body = jsonObject.getString("showapi_res_body");
-            Log.d("showapi_res_body",showapi_res_body);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -47,6 +44,7 @@ public class ParseUtil {
      *
      */
 
+    public class ParseReflect {
         private Reflect reflect = new Reflect();
 
         public Reflect parseReflect(String Data) {
@@ -127,6 +125,7 @@ public class ParseUtil {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
     }
 
 
@@ -137,12 +136,14 @@ public class ParseUtil {
      *
      */
 
-        int year;
-    List historyList = new ArrayList();
+    public class ParseHistory {
 
-        public List parseHistory(String Data) {
+        int year;
+        HistoryToday historyToday = new HistoryToday();
+
+        private HistoryToday parseHistory(String Data) {
             parseHistoryTwoJson(parseJson(Data));
-            return historyList;
+            return historyToday;
         }
 
         private void parseHistoryTwoJson(String jsonData) {
@@ -155,18 +156,16 @@ public class ParseUtil {
                 year = c.get(Calendar.YEAR);
 
                 for (int i = 0; i < year; i++) {
-                    HistoryToday historyToday = new HistoryToday();
                     if (!jsonObject.isNull(String.valueOf(i))) {//判断该节点是否为空
                         String thing = jsonObject.getString(String.valueOf(i));
-                        historyToday.setTheYear( "(≧▽≦)年份：" + String.valueOf(i));
+                        historyToday.setTheYear(String.valueOf(i));
                         historyToday.setContent(thing);
-
-                        historyList.add(historyToday);
                     }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
     }
 
 
@@ -178,29 +177,19 @@ public class ParseUtil {
      */
 
 
+    public class ParseWeather {
         AreaId areaId = new AreaId();
         Weather weather = new Weather();
 
-        public AreaId getAreaId(String Data) {
-            parseAreaIdJson(parseJson(Data));
+        private AreaId getAreaId(String Data) {
+            parseAreaIdArrayJson(parseJson(Data));
             return areaId;
         }
 
-        public Weather getWeather(String Data){
+        private Weather getWeather(String Data){
             parseWeatherJson(parseJson(Data));
             return weather;
         }
-
-    private void parseAreaIdJson(String jsonData){
-        JSONObject jsonObject = null;
-        try {
-            jsonObject = new JSONObject(jsonData);
-            String list = jsonObject.getString("list");
-            parseAreaIdArrayJson(list);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
         private void parseAreaIdArrayJson(String jsonData){
             JSONArray jsonArray = null;
@@ -233,37 +222,17 @@ public class ParseUtil {
                 jsonObject = new JSONObject(jsonData);
                 String day = jsonObject.getString("day");
                 String day_air_temperature = jsonObject.getString("day_air_temperature");//日间温度
-                String night_air_temperature = jsonObject.getString("night_air_temperature");//晚间温度
+                String night_air_temperature = jsonObject.getString("day_air_temperature");//晚间温度
                 String day_weather = jsonObject.getString("day_weather");//日间天气
                 String day_weather_pic = jsonObject.getString("day_weather_pic");//日间天气图像
-                String night_weather = jsonObject.getString("night_weather");//晚间天气
+                String night_weather = jsonObject.getString("day");//晚间天气
                 String night_weather_pic = jsonObject.getString("night_weather_pic");//晚间天气图像
                 String day_wind_power = jsonObject.getString("day_wind_power");//日间风速
-                String night_wind_power = jsonObject.getString("night_wind_power");//晚上间风速
+                String night_wind_power = jsonObject.getString("day_wind_power");//晚上间风速
                 String weekday = jsonObject.getString("weekday");//日期
-                switch (weekday){
-                    case "1":
-                        weekday = "星期一";
-                        break;
-                    case "2":
-                        weekday = "星期二";
-                        break;
-                    case "3":
-                        weekday = "星期三";
-                        break;
-                    case "4":
-                        weekday = "星期四";
-                        break;
-                    case "5":
-                        weekday = "星期五";
-                        break;
-                    case "6":
-                        weekday = "星期六";
-                        break;
-                    case "7":
-                        weekday = "星期日";
-                        break;
-                }
+                if (Integer.parseInt(weekday) == 7)
+                    weekday = "日";
+
                 weather.setDate(day);
                 weather.setDayTemperature(day_air_temperature);
                 weather.setDayweather(day_weather);
@@ -279,6 +248,7 @@ public class ParseUtil {
                 e.printStackTrace();
             }
         }
+    }
 
 
     /**
@@ -287,11 +257,12 @@ public class ParseUtil {
      *
      */
 
+    public class ParseMovie{
 
         Movie movie = new Movie();
 
-        public Movie parseMovie(String Data){
-            parseMovieJson(Data);
+        private Movie parseMovie(){
+
             return movie;
         }
 
@@ -388,66 +359,21 @@ public class ParseUtil {
                 e.printStackTrace();
             }
         }
-
-
-    /**
-     *
-     * 养生知识
-     *
-     */
-
-    List healthyList = new ArrayList<>();
-
-        public List parseHealthy(String Data){
-            parseHealthyJson(parseJson(Data));
-            return healthyList;
-        }
-
-    private void parseHealthyJson(String jsonData) {
-        JSONObject jsonObject = null;
-        try {
-            jsonObject = new JSONObject(jsonData);
-            String pagebean = jsonObject.getString("pagebean");
-            parseHealthyTwoJson(pagebean);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
-        private void parseHealthyTwoJson(String jsonData) {
-            JSONObject jsonObject = null;
-            try {
-                jsonObject = new JSONObject(jsonData);
-                String allNum = jsonObject.getString("allNum");//共几条
-                String allPages = jsonObject.getString("allPages");//共几页
-                String contentlist = jsonObject.getString("contentlist");
-                parseHealthyArrayJson(contentlist);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        private void parseHealthyArrayJson(String jsonData){
-            JSONArray jsonArray = null;
-            try {
-                jsonArray = new JSONArray(jsonData);
-                for (int i = 0; i <jsonArray.length() ; i++) {
-                    HealthyNotice healthyNotice = new HealthyNotice();
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    String creatTime = jsonObject.getString("ctime");
-                    String title = jsonObject.getString("title");
-                    String content = jsonObject.getString("intro");
-                    String media_name = jsonObject.getString("media_name");//出处
-                    String url = jsonObject.getString("media_name");//来源地址
+/*    *//**
+     *
+     * 新闻、新闻频道
+     * 解析
+     *
+     *//*
 
-                    healthyNotice.setCreatTime(creatTime);
-                    healthyNotice.setTitle(title);
-                    healthyNotice.setContent(content);
-                    healthyNotice.setFrom(media_name);
-                    healthyNotice.setFromUrl(url);
-                    healthyList.add(healthyNotice);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+    public class ParseNews{
+
+        private String parseNewsChannel(String Data){
+
+            return null;
         }
+
+    }*/
 }
