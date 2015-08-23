@@ -64,12 +64,6 @@ public class EssayFragment extends Fragment implements AbsListView.OnScrollListe
         }
     };
 
-
-
-
-
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.essay_list, container,false);

@@ -5,11 +5,18 @@
     android:layout_height="match_parent">
 
     <ImageView
+        android:src="@mipmap/movie"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/function_image" />
 
     <TextView
+        android:text="xiwen"
+        android:textColor="@color/text"
+        android:textSize="36sp"
+        android:layout_marginLeft="48dp"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/function_text"/>

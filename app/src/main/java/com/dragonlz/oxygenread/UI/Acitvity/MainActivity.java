@@ -352,11 +352,11 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void initList() {
-        Function ReflectMain = new Function("百思不解", R.mipmap.news);
-        Function movieMain = new Function("电影专区", R.mipmap.news);
-        Function historyMain = new Function("历史上的今天", R.mipmap.news);
+        Function ReflectMain = new Function("百思不解", R.mipmap.bsbdj);
+        Function movieMain = new Function("电影专区", R.mipmap.movie);
+        Function historyMain = new Function("历史上的今天", R.mipmap.history);
         Function healthyMain = new Function("养生妙招", R.mipmap.news);
-        Function storeMain = new Function("趣味段子", R.mipmap.news);
+        Function storeMain = new Function("趣味段子", R.mipmap.essay);
         functionList.add(ReflectMain);
         functionList.add(movieMain);
         functionList.add(historyMain);
