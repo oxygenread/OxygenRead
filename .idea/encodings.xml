@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/dragonlz/oxygenread/UI/Adapter/EssayAdapter.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/dragonlz/oxygenread/UI/Fragment/EssayFragment.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/dragonlz/oxygenread/UI/Model/Essay.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/dragonlz/oxygenread/UI/Utils/HttoCallbackListener.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/dragonlz/oxygenread/UI/Utils/HttpUtil.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/dragonlz/oxygenread/UI/Utils/LogUtils.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/essay_list.xml" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/essay_list_item.xml" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_float_button.png" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_float_button_refresh.png" charset="GBK" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

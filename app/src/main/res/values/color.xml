@@ -10,5 +10,9 @@
     <color name="gray">#bbbbbb</color>
     <color name="blue_sky">#7ecec9</color>
     <color name="text_selected_welcome">#888</color>
+    <color name="ed_line_normal">#e0e0e0</color>
+    <color name="ed_line_choose">#309ee9</color>
+    <color name="ed_text_color">#404040</color>
+    <color name="dialog_nav">#9a9a9a</color>
 
 </resources>

@@ -26,4 +26,9 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="EditTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/ed_line_choose</item>
+        <item name="colorControlNormal">@color/ed_line_normal</item>
+    </style>
+
 </resources>

@@ -1,9 +1,5 @@
 package com.dragonlz.oxygenread.UI.Utils;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,7 +11,7 @@ import java.net.URL;
  */
 public class HttpUtil {
 
-    public static void sendHttpRequest(final boolean needApikey,final String address,final HttoCallbackListener listener){
+    public static void sendHttpRequest(final String address,final HttoCallbackListener listener){
 
         new Thread(new Runnable() {
             @Override
@@ -25,8 +21,6 @@ public class HttpUtil {
                     URL url = new URL(address);
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
-                    if (needApikey)
-                        connection.setRequestProperty("apikey", "a535145037f63f973c5aad9e7ba1331d");
                     connection.setConnectTimeout(8000);
                     connection.setReadTimeout(8000);
                     connection.setDoInput(true);
@@ -60,65 +54,6 @@ public class HttpUtil {
                 }).start();
             }
 
-    public static void sendHttpRequestForPicfinal(final String address,final HttoCallbackListener listener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpURLConnection connection = null;
-                try {
-                    URL Url = new URL(address);
-                    connection = (HttpURLConnection) Url.openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.setConnectTimeout(8000);
-                    connection.setReadTimeout(8000);
-                    InputStream inputStream = connection.getInputStream();
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inPreferredConfig = Bitmap.Config.RGB_565;
-                    options.inSampleSize = 3;
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, options);
-                    if (listener != null) {
-                        listener.onBitmap(bitmap);
-                    }
-                    inputStream.close();
-                } catch (Exception e) {
-                    if (listener != null) {
-                        listener.onError(e);
-                    }
-                } finally {
-                    connection.disconnect();
-                }
-            }
-        }).start();
-  }
-
-
-    public static void sendHttpRequestForBigPic(final String address, final HttoCallbackListener listener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpURLConnection connection = null;
-                try {
-                    URL Url = new URL(address);
-                    connection = (HttpURLConnection) Url.openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.setConnectTimeout(8000);
-                    connection.setReadTimeout(8000);
-                    InputStream inputStream = connection.getInputStream();
-                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                        if (listener != null) {
-                            listener.onBitmap(bitmap);
-                        }
-                    inputStream.close();
-                    }catch (Exception e) {
-                    if (listener != null) {
-                        listener.onError(e);
-                    }
-                } finally {
-                    connection.disconnect();
-                }
-            }
-        }).start();
-    }
 }
 
 

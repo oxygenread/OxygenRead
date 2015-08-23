@@ -1,12 +1,11 @@
 package com.dragonlz.oxygenread.UI.Model;
 
-import android.graphics.Bitmap;
-
 /**
  * Created by sdm on 2015/8/16.
  */
 public class Reflect {
 
+    private String type;
     private String userHeader;
     private String userName;
     private String allPages;
@@ -16,11 +15,17 @@ public class Reflect {
     private String textContent;
     private String VoiceTime;
     private String contentVoice;
-    private String VideoTime;
-    private String contentVideo;
     private String createTime;
     private String Love;
     private String Hate;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public void setUserHeader(String userHeader) {
         this.userHeader = userHeader;
@@ -58,17 +63,11 @@ public class Reflect {
         this.contentVoice = contentVoice;
     }
 
-    public void setVideoTime(String videoTime) {
-        VideoTime = videoTime;
-    }
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 
-    public void setContentVideo(String contentVideo) {
-        this.contentVideo = contentVideo;
-    }
 
     public void setLove(String love) {
         Love = love;
@@ -110,13 +109,6 @@ public class Reflect {
         return VoiceTime;
     }
 
-    public String getVideoTime() {
-        return VideoTime;
-    }
-
-    public String getContentVideo() {
-        return contentVideo;
-    }
 
     public String getContentVoice() {
         return contentVoice;
