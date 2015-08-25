@@ -1,12 +1,14 @@
-package com.dragonlz.oxygenread.UI.Fragment;
+package com.dragonlz.oxygenread.UI.Acitvity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,7 +27,6 @@ import com.dragonlz.oxygenread.UI.Utils.ParseUtil;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -38,7 +39,7 @@ import java.util.Locale;
 /**
  * Created by sdm on 2015/8/22.
  */
-public class FindCinameFragment extends Fragment {
+public class FindCinameActivity extends AppCompatActivity {
 
     private List mDataSet = new ArrayList();
     private ItemAdapter mMovieAdapter;
@@ -53,8 +54,6 @@ public class FindCinameFragment extends Fragment {
     private LinearLayoutManager mLayoutManager;
 
     private SharedPreferences pref;
-    private SharedPreferences.Editor editor;
-    private List historyMessage = new ArrayList();
 
     private Handler handler = new Handler(){
         @Override
@@ -74,13 +73,15 @@ public class FindCinameFragment extends Fragment {
         }
     };
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.findciname_fragment,container,false);
-        mMovieListView = (RecyclerView) view.findViewById(R.id.findcinameList);
-        mButton = (Button) view.findViewById(R.id.bt_findciname);
-        mEditText = (EditText) view.findViewById(R.id.et_findciname);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_findciname);
+
+        pref = getSharedPreferences("read", Context.MODE_PRIVATE);
+        mMovieListView = (RecyclerView) findViewById(R.id.findcinameList);
+        mButton = (Button) findViewById(R.id.bt_findciname);
+        mEditText = (EditText) findViewById(R.id.et_findciname);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,7 +90,6 @@ public class FindCinameFragment extends Fragment {
             }
         });
         setData();
-        return view;
     }
 
     private void init(String cinemaname){
@@ -102,9 +102,9 @@ public class FindCinameFragment extends Fragment {
     }
 
     private void setData(){
-        mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager = new LinearLayoutManager(this);
         mMovieListView.setLayoutManager(mLayoutManager);
-        mMovieAdapter = new ItemAdapter(getActivity());
+        mMovieAdapter = new ItemAdapter(this);
         mMovieListView.setAdapter(mMovieAdapter);
     }
 
@@ -143,22 +143,25 @@ public class FindCinameFragment extends Fragment {
 
         @Override
         public ItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            View view = mInflater.inflate(R.layout.findciname_item, viewGroup, false);
+            View view = mInflater.inflate(R.layout.findmovie_item, viewGroup, false);
             return new ItemViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(ItemViewHolder itemViewHolder, int i) {
-            Movie movie = (Movie) mDataSet.get(i);
-            for (int a = 0; a < movie.getMovie().size() ; a++) {
-                Movie.MovieContent content = (Movie.MovieContent) movie.getMovie().get(a);
-                itemViewHolder.movieName.setText(content.getMovieName());
-                itemViewHolder.movieArea.setText(content.getMovieProduceArea());
-                itemViewHolder.movieStar.setText(content.getMovieStar());
-                itemViewHolder.movieDirector.setText(content.getMovieDirector());
-                itemViewHolder.movieDescrption.setText(content.getMovieDescrption());
-                Picasso.with(getActivity()).load(content.getMoviePicture()).into(itemViewHolder.movieImage);
-            }
+            final Movie movie = (Movie) mDataSet.get(i);
+            itemViewHolder.CinemaName.setText(movie.getCinema());
+            itemViewHolder.CinemaArea.setText(movie.getCinemaAddress());
+            itemViewHolder.CinemaNumber.setText(movie.getCinemaPhone());
+            itemViewHolder.myView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    List movieContent = movie.getMovie();
+                    ShowMovieActivity.getMovieContent(movieContent);
+                    Intent intent = new Intent(FindCinameActivity.this,ShowMovieActivity.class);
+                    startActivity(intent);
+                }
+            });
         }
 
         @Override
@@ -168,22 +171,17 @@ public class FindCinameFragment extends Fragment {
     }
 
     private static class ItemViewHolder extends RecyclerView.ViewHolder {
-        TextView movieName;
-        TextView movieArea;
-        TextView movieStar;
-        TextView movieDirector;
-        TextView movieDescrption;
-        ImageView movieImage;
-
+        TextView CinemaName;
+        TextView CinemaArea;
+        TextView CinemaNumber;
+        View myView;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            movieName = (TextView) itemView.findViewById(R.id.tv_movieName);
-            movieArea = (TextView) itemView.findViewById(R.id.tv_movieArea);
-            movieStar = (TextView) itemView.findViewById(R.id.tv_movieStar);
-            movieDirector = (TextView) itemView.findViewById(R.id.tv_movieStar);
-            movieDescrption = (TextView) itemView.findViewById(R.id.tv_movieDescrption);
-            movieImage = (ImageView) itemView.findViewById(R.id.iv_movieImage);
+            CinemaName = (TextView) itemView.findViewById(R.id.tv_cinemaName);
+            CinemaArea = (TextView) itemView.findViewById(R.id.tv_cinemaAdress);
+            CinemaNumber = (TextView) itemView.findViewById(R.id.tv_cinemaPhone);
+            myView = itemView;
         }
     }
 }

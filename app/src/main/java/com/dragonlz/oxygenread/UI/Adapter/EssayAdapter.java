@@ -15,7 +15,7 @@ import java.util.List;
 
 
 /**
- * Created by ASUS on 2015/5/19.
+ * Created by DragonؼLz on 2015/8/18
  */
 public class EssayAdapter extends ArrayAdapter<Essay> {
 

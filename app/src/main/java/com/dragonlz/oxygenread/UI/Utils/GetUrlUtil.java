@@ -75,4 +75,11 @@ public class GetUrlUtil {
                 + time + "&" + healthyId + "&" + showapi_sign;
         return healthyUrl;
     }
+
+    public String getMovieNumberUrl(String time){
+        String healthyUrl = API.getMovienumberApi() + "?" + showapi_appid + "&" + showapi_timestamp
+                + time + "&" + showapi_sign;
+        return healthyUrl;
+    }
+
 }

@@ -118,7 +118,6 @@ public class EssayFragment extends Fragment implements AbsListView.OnScrollListe
             }
 
 
-
             @Override
             public void onError(Exception e) {
             }

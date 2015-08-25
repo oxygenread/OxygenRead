@@ -5,7 +5,7 @@ package com.dragonlz.oxygenread.UI.Model;
  */
 public class Reflect {
 
-    private String type;
+    private int type;
     private String userHeader;
     private String userName;
     private String allPages;
@@ -19,11 +19,11 @@ public class Reflect {
     private String Love;
     private String Hate;
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 

@@ -25,6 +25,7 @@ dependencies {
     compile 'jp.wasabeef:recyclerview-animators:1.2.0@aar'
     compile 'com.race604.flyrefresh:library:1.0.2'
     compile 'com.android.support:recyclerview-v7:22.2.1'
+    compile 'com.getbase:floatingactionbutton:1.9.1'
     compile 'com.afollestad:material-dialogs:0.7.5.5'
     compile 'com.balysv:material-ripple:1.0.2'
     compile files('libs/nineoldandroids-2.4.0.jar')

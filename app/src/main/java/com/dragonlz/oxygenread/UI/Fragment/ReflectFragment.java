@@ -55,11 +55,18 @@ public class ReflectFragment extends Fragment implements FlyRefreshLayout.OnPull
     private RecyclerView mListView;
     private LinearLayoutManager mLayoutManager;
     private List mDataSet = new ArrayList<>();
+    private List theAllDataList = new ArrayList();
     private ItemAdapter mAdapter;
     private Handler mHandler = new Handler();
     private OkHttpClient client = new OkHttpClient();
     private String readReflectData;
     private MediaPlayer mediaPlayer;
+    private int page=1;
+
+    private int theStart;
+    private int theEnd;
+    private int contentNumber;
+    private int thisNumber;
 
     private AsyncHttpClient asyncHttpClient;
 
@@ -73,39 +80,21 @@ public class ReflectFragment extends Fragment implements FlyRefreshLayout.OnPull
                     ParseUtil reflect = new ParseUtil();
                     String data = readReflectData;
                     Log.d("data", data);
-                    mDataSet = reflect.parseReflect(data);
-                    for (int i = 0; i < mDataSet.size() ; i++) {
-                        Reflect reflectData = (Reflect) mDataSet.get(i);
-                        Log.d("CreateTime", reflectData.getCreateTime());
-                        Log.d("Hate",reflectData.getHate());
-                        Log.d("Love",reflectData.getLove());
-                        Log.d("TextContent",reflectData.getTextContent());
-                        Log.d("UserHeader",reflectData.getUserHeader());
-                        Log.d("UserName",reflectData.getUserName());
-
-                         if (reflectData.getContentVoice()!=null){
-                            Log.d("ContentVoice",reflectData.getContentVoice());
-                            Log.d("VoiceTime",reflectData.getVoiceTime());
-                        }else if (reflectData.getContentImage() !=null) {
-                            Log.d("ContentImage", reflectData.getContentImage());
-                        }
-                    }
-
-                    if (mDataSet != null) {
-                        mAdapter.notifyDataSetChanged();
-                    }
-
+                    theAllDataList = reflect.parseReflect(data);
+                    contentNumber = theAllDataList.size();
+                    setListData();
                     break;
             }
         }
     };
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View newsView = inflater.inflate(R.layout.reflect_fragment, container, false);
-        init();
+        init(page);
         initData(newsView);
         return newsView;
     }
@@ -130,28 +119,63 @@ public class ReflectFragment extends Fragment implements FlyRefreshLayout.OnPull
         }).start();
     }
 
-    private void init(){
+    private void setListData() {
+        for (int a = theStart; a < theEnd && a< contentNumber ; a++) {
+            mDataSet.add(theAllDataList.get(a));
+            thisNumber++;
+        }
+        theStart += 5;
+        theEnd += 5;
+        if (mDataSet != null) {
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void init(int page){
+        theStart = 0;
+        theEnd = 5;
+        thisNumber = 0;
+        contentNumber = 0;
         GetUrlUtil getUrlUtil = new GetUrlUtil();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");//时间显示格式
         Date curDate = new Date(System.currentTimeMillis());
         String Time = formatter.format(curDate);
-        String url = getUrlUtil.getReflectUrl("1", Time);
+
+        String url = getUrlUtil.getReflectUrl(String.valueOf(page), Time);//这里填加载第几页
         initDataSet(url);
     }
 
-    private void initData(View v){
+    private void initData(View v) {
 
-        mFlylayout = (FlyRefreshLayout) v. findViewById(R.id.fly_layout);
+        mFlylayout = (FlyRefreshLayout) v.findViewById(R.id.fly_layout);
 
         mFlylayout.setOnPullRefreshListener(this);
 
-        mListView = (RecyclerView)v. findViewById(R.id.reflectList);
+        mListView = (RecyclerView) v.findViewById(R.id.reflectList);
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mListView.setLayoutManager(mLayoutManager);
         mAdapter = new ItemAdapter(getActivity());
         mListView.setAdapter(mAdapter);
         mListView.setItemAnimator(new SampleItemAnimator());
+
+        mListView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                    if (mLayoutManager.findLastCompletelyVisibleItemPosition() == (contentNumber-1)) {
+                        Toast.makeText(getActivity(),"正在加载下一页",Toast.LENGTH_SHORT).show();
+                        mDataSet.clear();
+                        page++;
+                        init(page);
+                    } else {
+                        if (mLayoutManager.findLastCompletelyVisibleItemPosition() == (thisNumber-1)) {
+                            setListData();
+                        }
+                    }
+                }
+        });
     }
 
     @Override
@@ -173,14 +197,15 @@ public class ReflectFragment extends Fragment implements FlyRefreshLayout.OnPull
 
     @Override
     public void onRefreshAnimationEnd(FlyRefreshLayout flyRefreshLayout) {
-
+        mDataSet.clear();
+        page = 1;
+        init(page);
     }
 
     private void bounceAnimateView(View view) {
         if (view == null) {
             return;
         }
-
         Animator swing = ObjectAnimator.ofFloat(view, "rotationX", 0, 30, -20, 0);
         swing.setDuration(400);
         swing.setInterpolator(new AccelerateInterpolator());
@@ -213,32 +238,43 @@ public class ReflectFragment extends Fragment implements FlyRefreshLayout.OnPull
         public void onBindViewHolder(ItemViewHolder itemViewHolder, int i) {
             final Reflect theReflect = (Reflect) mDataSet.get(i);
 
+            if (theReflect.getUserHeader().equals("")) {
+                itemViewHolder.userHead.setImageResource(R.mipmap.eroo);
+            }else {
+                Picasso.with(getActivity()).load(theReflect.getUserHeader()).placeholder(R.mipmap.wait).error(R.mipmap.eroo).into(itemViewHolder.userHead);
+            }
             itemViewHolder.userName.setText(theReflect.getUserName());
-            itemViewHolder.textContent.setText(theReflect.getTextContent());
+            itemViewHolder.creatTime.setText(theReflect.getCreateTime());
             itemViewHolder.Love.setText(theReflect.getLove());
             itemViewHolder.Hate.setText(theReflect.getHate());
-            itemViewHolder.creatTime.setText(theReflect.getCreateTime());
-            Picasso.with(getActivity()).load(theReflect.getUserHeader()).into(itemViewHolder.userHead);
-            if (theReflect.getType().equals("10")) {
-                String imageurl = theReflect.getContentImage();
-                if (imageurl != null) {
-                    if (imageurl.indexOf(".jpg") != -1) {
-                        Log.d(" setJPG", theReflect.getContentImage());
-                        Picasso.with(getActivity()).load(imageurl).into(itemViewHolder.jpgImageView);
-                    } else if(imageurl.indexOf(".gif") != -1) {
-                        Log.d(" setGifImage", theReflect.getContentImage());
-                        itemViewHolder.jpgImageView.setVisibility(View.GONE);
-                        setGifImage(imageurl, itemViewHolder.gifImageView);
+            itemViewHolder.textContent.setText(theReflect.getTextContent());
+            if (theReflect.getType() == 29){
+                itemViewHolder.jpgImageView.setVisibility(View.GONE);
+                itemViewHolder.gifImageView.setVisibility(View.GONE);
+            } else if(theReflect.getType() != 29) {
+                if (theReflect.getType() == 10) {
+                    String imageurl = theReflect.getContentImage();
+                    if (imageurl != null) {
+                        if (imageurl.indexOf(".jpg") != -1) {
+                            Log.d(" setJPG", theReflect.getContentImage());
+                            Picasso.with(getActivity()).load(imageurl).into(itemViewHolder.jpgImageView);
+                            itemViewHolder.gifImageView.setVisibility(View.GONE);
+                        } else if (imageurl.indexOf(".gif") != -1) {
+                            Log.d(" setGifImage", theReflect.getContentImage());
+                            itemViewHolder.jpgImageView.setVisibility(View.GONE);
+                            setGifImage(imageurl, itemViewHolder.gifImageView);
+                        }
                     }
+                } else if (theReflect.getType() == 31) {
+                    itemViewHolder.jpgImageView.setImageResource(R.mipmap.ic_launcher);
+                    itemViewHolder.gifImageView.setVisibility(View.GONE);
+                    itemViewHolder.jpgImageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            playMusic(theReflect.getContentVoice());
+                        }
+                    });
                 }
-            }else if (theReflect.getType().equals("31")){
-                itemViewHolder.jpgImageView.setImageResource(R.mipmap.ic_launcher);
-                itemViewHolder.jpgImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        playMusic(theReflect.getContentVoice());
-                    }
-                });
             }
 
         }
@@ -269,7 +305,7 @@ public class ReflectFragment extends Fragment implements FlyRefreshLayout.OnPull
                                                       byte[] arg2, Throwable arg3) {
 
                                     Toast.makeText(getActivity(),
-                                            "加载网络图片出错", Toast.LENGTH_SHORT).show();
+                                            "加载GIF图片出错", Toast.LENGTH_SHORT).show();
                                 }
                             });
         }

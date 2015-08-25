@@ -34,8 +34,11 @@
             android:layout_marginTop="10dp"
             >
 
-            <TextView
-
+            <com.dragonlz.oxygenread.UI.widget.GlideTextView
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
                 android:id="@+id/tv_cinemaName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,18 +46,20 @@
                 android:gravity="center_vertical"
                 android:textSize="18sp" />
 
+            </RelativeLayout>
+
             <TextView
 
                 android:id="@+id/tv_cinemaPhone"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text"
                 android:gravity="right"
                 android:layout_alignParentRight="true"
                 android:textSize="14sp"
-                android:padding="8dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
                 android:layout_gravity="bottom"/>
-            </RelativeLayout>
 
             <LinearLayout
                 android:orientation="horizontal"

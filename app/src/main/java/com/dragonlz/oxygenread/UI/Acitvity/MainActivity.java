@@ -11,20 +11,27 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -74,6 +81,8 @@ public class MainActivity extends ActionBarActivity {
     private TextView windSpeed;
     private TextView weekday;
     private AppCompatEditText et_city;
+    private LinearLayout finish_layout;
+    private LinearLayout about_layout;
 
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
@@ -97,6 +106,7 @@ public class MainActivity extends ActionBarActivity {
     private static final int UPDATA_CITYID = -1;
     private static final int UPDATA_WEATHER = 0;
     private boolean isFirst;
+    private ShareActionProvider mShareActionProvider;
 
 
     AreaId areaid = new AreaId();
@@ -125,7 +135,9 @@ public class MainActivity extends ActionBarActivity {
                         getWeatherImage(weather.getDayWeatherImage());
                     }
                     weatherCity.setText(areaid.getCity());
-                    weatherTem.setText(weather.getDayTemperature() + "℃");
+                    if (weather.getDayTemperature()!=null) {
+                        weatherTem.setText(weather.getDayTemperature() + "℃");
+                    }
                     theWeather.setText(weather.getDayweather());
                     windSpeed.setText(weather.getDayWindPower());
                     weekday.setText(weather.getWeekday());
@@ -148,18 +160,14 @@ public class MainActivity extends ActionBarActivity {
         }else {
 
         }
-        //存入数据
         editor.putBoolean("isFirstUse", false);
-        //提交修改
         editor.commit();
         initData();
         fragmentManager = getSupportFragmentManager();
         setFragmentSelect(REFLECT);
-//        获取城市
         String city = pref.getString("city","");
         getWeatherData(getUrl.getWeatherCityIdUrl(city), true);
 
-//        getWeatherData(getUrl.getWeatherCityIdUrl("重庆"), true);
     }
 
     private void initData() {
@@ -171,13 +179,44 @@ public class MainActivity extends ActionBarActivity {
         mToorbar.setTitle("Oxygen阅读");
         setSupportActionBar(mToorbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToorbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.change_city:
+                        DiaLog();
+                        break;
 
+                    case R.id.checkVision:
+                        Toast.makeText(MainActivity.this,"没有更新",Toast.LENGTH_SHORT).show();
+
+                        break;
+                }
+                return true;
+            }
+
+        });
         mImageView = (ImageView) findViewById(R.id.iv_weather);
         weatherCity = (TextView) findViewById(R.id.tv_city);
         weatherTem = (TextView) findViewById(R.id.tv_temperature);
         theWeather = (TextView) findViewById(R.id.tv_weather);
         windSpeed = (TextView) findViewById(R.id.tv_wind);
         weekday = (TextView) findViewById(R.id.tv_weekend);
+        about_layout = (LinearLayout) findViewById(R.id.about_layout);
+        about_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent aboutus = new Intent(MainActivity.this,AboutActivity.class);
+                startActivity(aboutus);
+            }
+        });
+        finish_layout = (LinearLayout) findViewById(R.id.finish_layout);
+        finish_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.mDrawLayout);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToorbar, R.string.drawer_open,
@@ -195,18 +234,26 @@ public class MainActivity extends ActionBarActivity {
                 switch (position) {
                     case 0:
                         setFragmentSelect(REFLECT);
+                        mDrawerLayout.closeDrawers();
                         break;
                     case 1:
                         setFragmentSelect(MOVIEW);
+                        mDrawerLayout.closeDrawers();
+
                         break;
                     case 2:
                         setFragmentSelect(HISTORYTODAY);
+                        mDrawerLayout.closeDrawers();
+
                         break;
                     case 3:
                         setFragmentSelect(HEALTHY);
+                        mDrawerLayout.closeDrawers();
+
                         break;
                     case 4:
                         setFragmentSelect(ESSAY);
+                        mDrawerLayout.closeDrawers();
                         break;
                 }
             }
@@ -420,7 +467,7 @@ public class MainActivity extends ActionBarActivity {
     private void DiaLog(){
         View ChangeCity = LayoutInflater.from(this).inflate(R.layout.change_city, null);
         et_city = (AppCompatEditText) ChangeCity.findViewById(R.id.et_city);
-        final String city = et_city.getText().toString();
+
         new MaterialDialog.Builder(this)
                 .title("获取您的地理位置")
                 .customView(ChangeCity, false)
@@ -435,7 +482,8 @@ public class MainActivity extends ActionBarActivity {
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
-                        editor.putString("city",city);
+                        final String city_et = et_city.getText().toString();
+                        editor.putString("city",city_et);
                         editor.commit();
                     }
 
@@ -446,6 +494,33 @@ public class MainActivity extends ActionBarActivity {
                 })
                 .show();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        /* ShareActionProvider配置 */
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menu
+                .findItem(R.id.action_share));
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/*");
+        mShareActionProvider.setShareIntent(intent);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+
+
+        return super.onOptionsItemSelected(item);
+    }
+
 }
 
 

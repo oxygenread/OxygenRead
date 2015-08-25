@@ -1,5 +1,6 @@
 package com.dragonlz.oxygenread.UI.Utils;
 
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
@@ -8,6 +9,7 @@ import com.dragonlz.oxygenread.UI.Model.AreaId;
 import com.dragonlz.oxygenread.UI.Model.HealthyNotice;
 import com.dragonlz.oxygenread.UI.Model.HistoryToday;
 import com.dragonlz.oxygenread.UI.Model.Movie;
+import com.dragonlz.oxygenread.UI.Model.MovieBoxOffice;
 import com.dragonlz.oxygenread.UI.Model.Reflect;
 import com.dragonlz.oxygenread.UI.Model.Weather;
 
@@ -28,13 +30,7 @@ public class ParseUtil {
             jsonObject = new JSONObject(jsonData);
             int showapi_res_code = jsonObject.getInt("showapi_res_code");
             String showapi_res_error = jsonObject.getString("showapi_res_error");
-            if (showapi_res_code == 0) {
                 showapi_res_body = jsonObject.getString("showapi_res_body");
-                Log.d("showapi_res_body", showapi_res_body);
-            }else {
-                //请求失败
-                return showapi_res_error;
-            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -94,10 +90,8 @@ public class ParseUtil {
                     Reflect reflect = new Reflect();
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     String type = jsonObject.getString("type");
-                    reflect.setType(type);
                     int succeed = Integer.parseInt(type);
                     if(succeed != 41) {//视频
-
                         if (succeed == 10) {//图片
                             String image = jsonObject.getString("image0");
                             reflect.setContentImage(image);
@@ -123,6 +117,7 @@ public class ParseUtil {
                         reflect.setUserName(name);
                         reflect.setUserHeader(profile_image);
                         reflect.setTextContent(text);
+                        reflect.setType(succeed);
 
                         reflectList.add(reflect);
                     }
@@ -308,6 +303,7 @@ public class ParseUtil {
                 String error = jsonObject.getString("error");
                 String status = jsonObject.getString("status");
                 String result = jsonObject.getString("result");
+                Log.d("Movie",result);
                 parseMovieArrayJson(result);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -346,8 +342,8 @@ public class ParseUtil {
             try {
                 jsonArray = new JSONArray(jsonData);
                 for (int i = 0; i <jsonArray.length() ; i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
                     Movie.MovieContent content = theMovie.new MovieContent();
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
                     String movie_name = jsonObject.getString("movie_name");
                     String movie_nation = jsonObject.getString("movie_nation");
                     String movie_type = jsonObject.getString("movie_type");
@@ -377,10 +373,9 @@ public class ParseUtil {
                     content.setMovieStyle(movie_tags);
 
                     parseMoviePlayArrayJson(time_table, content);
-                    theMovie.setMovie(movieContentList);
-                    movieList.add(theMovie);
                 }
-
+                theMovie.setMovie(movieContentList);
+                movieList.add(theMovie);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -398,15 +393,63 @@ public class ParseUtil {
                     movieDescendants.setMoviePlayTime(time);
                     movieDescendants.setMoviePlayDate(date);
                     moviePlayTimeList.add(movieDescendants);
-
                 }
                 movieContent.setMovieContent(moviePlayTimeList);
                 movieContentList.add(movieContent);
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+
+
+    /**
+     *
+     * 电影单周票房
+
+     *
+     */
+
+    List movieNumberList = new ArrayList();
+
+    public List parseMovieNumber(String Data){
+        parseMovieNumberJson(parseJson(Data));
+        return movieNumberList;
+    }
+
+    private void parseMovieNumberJson(String jsonData) {
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(jsonData);
+            String datalist = jsonObject.getString("datalist");
+            parseMovieNumberArrayJson(datalist);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void parseMovieNumberArrayJson(String jsonData){
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = new JSONArray(jsonData);
+            for (int i = 0; i <jsonArray.length() ; i++) {
+                MovieBoxOffice movieBoxOffice = new MovieBoxOffice();
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String MovieName = jsonObject.getString("MovieName");
+                String Rank = jsonObject.getString("Rank");
+                String SumWeekAmount = jsonObject.getString("SumWeekAmount");
+                String WomIndex = jsonObject.getString("WomIndex");
+
+                movieBoxOffice.setMovieName(MovieName);
+                movieBoxOffice.setMovieComment(Rank);
+                movieBoxOffice.setMovieMoney(SumWeekAmount);
+                movieBoxOffice.setMovieTheNumber(WomIndex);
+
+                movieNumberList.add(movieBoxOffice);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     /**

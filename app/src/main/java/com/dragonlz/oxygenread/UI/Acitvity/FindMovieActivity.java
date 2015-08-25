@@ -1,4 +1,4 @@
-package com.dragonlz.oxygenread.UI.Fragment;
+package com.dragonlz.oxygenread.UI.Acitvity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -35,7 +35,7 @@ import java.util.Locale;
 /**
  * Created by sdm on 2015/8/22.
  */
-public class FindMovieFragment extends Fragment implements View.OnClickListener {
+public class FindMovieActivity extends AppCompatActivity {
 
     private List mDataSet = new ArrayList();
     private ItemAdapter mMovieAdapter;
@@ -47,13 +47,7 @@ public class FindMovieFragment extends Fragment implements View.OnClickListener 
     private LinearLayoutManager mLayoutManager;
     private EditText writeMovie;
     private Button mButton;
-    private TextView historyFind1;
-    private TextView historyFind2;
-    private TextView historyFind3;
-    private TextView historyFind4;
     private SharedPreferences pref;
-    private SharedPreferences.Editor editor;
-    private List historyMessage = new ArrayList();
 
     private Handler handler = new Handler(){
         @Override
@@ -73,40 +67,34 @@ public class FindMovieFragment extends Fragment implements View.OnClickListener 
         }
     };
 
-    @Nullable
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.findmovie_fragment,container,false);
-        mMovieListView = (RecyclerView) view.findViewById(R.id.findmovieList);
-        pref = getActivity().getSharedPreferences("read",Context.MODE_PRIVATE) ;
-        editor = pref.edit();
-        setHisotryData(view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_findmovie);
+        mMovieListView = (RecyclerView) findViewById(R.id.findmovieList);
+        pref = getSharedPreferences("read", Context.MODE_PRIVATE);
+        setHisotryData();
         setData();
-        return view;
     }
 
-    private void setHisotryData(View view) {
-        writeMovie = (EditText) view.findViewById(R.id.et_findmovie);
-        mButton = (Button) view.findViewById(R.id.bt_findmovie);
-
-        historyFind1 = (TextView) view.findViewById(R.id.tv_his1);
-        historyFind2 = (TextView) view.findViewById(R.id.tv_his2);
-        historyFind3 = (TextView) view.findViewById(R.id.tv_his3);
-        historyFind4 = (TextView) view.findViewById(R.id.tv_his4);
-
-        getTheHistory();
-
-        mButton.setOnClickListener(this);
-        historyFind1.setOnClickListener(this);
-        historyFind2.setOnClickListener(this);
-        historyFind3.setOnClickListener(this);
-        historyFind4.setOnClickListener(this);
+    private void setHisotryData() {
+        writeMovie = (EditText) findViewById(R.id.et_findmovie);
+        mButton = (Button) findViewById(R.id.bt_findmovie);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String themovie = writeMovie.getText().toString();
+                Log.d("Movie__Movie___Movie",themovie);
+                init(themovie);
+            }
+        });
     }
 
     private void setData(){
-        mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager = new LinearLayoutManager(this);
         mMovieListView.setLayoutManager(mLayoutManager);
-        mMovieAdapter = new ItemAdapter(getActivity());
+        mMovieAdapter = new ItemAdapter(this);
         mMovieListView.setAdapter(mMovieAdapter);
     }
 
@@ -143,65 +131,6 @@ public class FindMovieFragment extends Fragment implements View.OnClickListener 
         }).start();
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.bt_findmovie:
-                String themovie = writeMovie.getText().toString();
-                int historyNumber = pref.getInt("historyNumber", 0);
-                if ( historyNumber< 4) {
-                    if ((themovie != pref.getString("findmovie1", "")) && (themovie != pref.getString("findmovie2", ""))
-                            && (themovie != pref.getString("findmovie3", "")) && (themovie != pref.getString("findmovie4", ""))) {
-                        historyMessage.add(themovie);
-                        for (int i = historyNumber; i < historyMessage.size(); i++) {
-                            editor.putString("findmovie" + String.valueOf(i), (String) historyMessage.get(i));
-                            editor.putInt("historyNumber", i);
-                        }
-                    }
-                }else {
-                    editor.putString("findmovie1",themovie);
-                    editor.putString("findmovie2", (String) historyMessage.get(0));
-                    editor.putString("findmovie3", (String) historyMessage.get(1));
-                    editor.putString("findmovie4", (String) historyMessage.get(2));
-                }
-                editor.commit();
-                mMovieListView.setVisibility(View.VISIBLE);
-                init(themovie);
-                break;
-            case R.id.tv_his1:
-                if (historyFind1.getText() != null) {
-                    String gethistorymovie1 = historyFind1.getText().toString();
-                    writeMovie.setText(gethistorymovie1);
-                }
-                break;
-            case R.id.tv_his2:
-                if (historyFind1.getText() != null) {
-                    String gethistorymovie2 = historyFind2.getText().toString();
-                    writeMovie.setText(gethistorymovie2);
-                }
-                break;
-            case R.id.tv_his3:
-                if (historyFind3.getText() != null) {
-                    String gethistorymovie3 = historyFind3.getText().toString();
-                    writeMovie.setText(gethistorymovie3);
-                }
-                break;
-            case R.id.tv_his4:
-                if (historyFind4.getText() != null) {
-                    String gethistorymovie4 = historyFind4.getText().toString();
-                    writeMovie.setText(gethistorymovie4);
-                }
-                break;
-
-        }
-    }
-
-    public void getTheHistory() {
-        historyFind1.setText(pref.getString("findmovie1",""));
-        historyFind2.setText(pref.getString("findmovie2",""));
-        historyFind3.setText(pref.getString("findmovie3",""));
-        historyFind4.setText(pref.getString("findmovie4",""));
-    }
 
 
     private class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> {
@@ -226,8 +155,6 @@ public class FindMovieFragment extends Fragment implements View.OnClickListener 
             itemViewHolder.cinemaName.setText(movie.getCinema());
             itemViewHolder.cinemaAdress.setText(movie.getCinemaAddress());
             itemViewHolder.cinemaPhone.setText(movie.getCinemaPhone());
-//            itemViewHolder.moviePlayDate.setText(movie.getMoviePlayDate());
-//            itemViewHolder.moviePlayTime.setText(movie.getMoviePlayTime());
         }
 
         @Override

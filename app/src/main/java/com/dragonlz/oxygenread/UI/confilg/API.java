@@ -34,6 +34,18 @@ public class API {
     private static final String CINEMA_API = "http://apis.baidu.com/apistore/movie/cinema";
     private static final String MOVIEW_API = "http://apis.baidu.com/apistore/movie/film";
 
+    /**
+     *
+     *
+     * 电影单周票房
+     */
+
+    private static final String MOVIENUMBER_API = "http://route.showapi.com/578-1";
+
+    public static String getMovienumberApi() {
+        return MOVIENUMBER_API;
+    }
+
     public static String getHealthyApi() {
         return HEALTHY_API;
     }
